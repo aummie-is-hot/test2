@@ -15,8 +15,7 @@
                 overflow: hidden;
             }
             #canvas {
-                 width: 800px;
-    height: 480px;
+              
                 border: none;
             }
         </style>
@@ -27,6 +26,9 @@
         </div>
         <script>
             async function start() {
+                 const canvas = document.getElementById("canvas");
+    canvas.width = 800;   // your game's design width
+    canvas.height = 480;  // your game's design height
                 main()
             }
             window.addEventListener("load", start);

@@ -23,7 +23,10 @@ public class Main extends ApplicationAdapter {
      private Texture evilturtle;
     private Random random = new Random(); 
      private Random random2 = new Random(); 
-       private OrthographicCamera camera;
+      public static final float VIRTUAL_WIDTH = 800;
+      public static final float VIRTUAL_HEIGHT = 600;
+    private OrthographicCamera camera;
+    private Viewport viewport;
     float x = 100;
     float y = 100;
      float xwall1 = -430;
@@ -39,10 +42,7 @@ public class Main extends ApplicationAdapter {
     int timer = 0;
     float randomFloat = MathUtils.random(0,500); 
      
-    private Viewport viewport;
-
-    private final float WORLD_WIDTH = 800;  // your design width
-    private final float WORLD_HEIGHT = 480; // your design height
+    
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -51,13 +51,10 @@ public class Main extends ApplicationAdapter {
         wall2 = new Texture("wallupdown.png");
         evilturtle = new Texture("EvilTurtle.png");
         camera = new OrthographicCamera();
-        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-        viewport.apply();
-        camera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
-        
+        viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
     }
-
-public void resize(int width, int height) {
+    @Override
+    public void resize(int width, int height){
         viewport.update(width, height, true);
     }
 
@@ -95,6 +92,8 @@ evily =700;
         
     
         batch.end();
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
         Rectangle bounds = new Rectangle(xwall1, ywall1, wall1.getWidth()-58, wall1.getHeight());
         Rectangle bounds2 = new Rectangle(xwall2, ywall2, wall1.getWidth()-58, wall1.getHeight());
         Rectangle bounds3 = new Rectangle(xwall3, ywall3, wall2.getWidth()-58, wall2.getHeight()-58);

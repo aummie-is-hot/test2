@@ -4117,10 +4117,7 @@ let cbguv_Viewport__init_ = $this => {
     jl_Object__init_($this);
     $this.$tmp = cbgm_Vector3__init_();
 },
-cbguv_Viewport_apply = $this => {
-    $this.$apply0(0);
-},
-cbguv_Viewport_apply0 = ($this, $centerCamera) => {
+cbguv_Viewport_apply = ($this, $centerCamera) => {
     cbggg_HdpiUtils_glViewport($this.$screenX, $this.$screenY, $this.$screenWidth, $this.$screenHeight);
     $this.$camera.$viewportWidth = $this.$worldWidth;
     $this.$camera.$viewportHeight = $this.$worldHeight;
@@ -4176,11 +4173,11 @@ cbguv_ScalingViewport__init_0 = (var_0, var_1, var_2, var_3) => {
 },
 cbguv_ScalingViewport_update = ($this, $screenWidth, $screenHeight, $centerCamera) => {
     let $scaled, $viewportWidth, $viewportHeight;
-    $scaled = $this.$scaling0.$apply1($this.$getWorldWidth(), $this.$getWorldHeight(), $screenWidth, $screenHeight);
+    $scaled = $this.$scaling0.$apply0($this.$getWorldWidth(), $this.$getWorldHeight(), $screenWidth, $screenHeight);
     $viewportWidth = jl_Math_round($scaled.$x2);
     $viewportHeight = jl_Math_round($scaled.$y2);
     $this.$setScreenBounds(($screenWidth - $viewportWidth | 0) / 2 | 0, ($screenHeight - $viewportHeight | 0) / 2 | 0, $viewportWidth, $viewportHeight);
-    $this.$apply0($centerCamera);
+    $this.$apply1($centerCamera);
 },
 cbguv_FitViewport = $rt_classWithoutFields(cbguv_ScalingViewport),
 cbguv_FitViewport__init_ = ($this, $worldWidth, $worldHeight, $camera) => {
@@ -22059,7 +22056,7 @@ cbguv_ScreenViewport__init_2 = var_0 => {
 cbguv_ScreenViewport_update = ($this, $screenWidth, $screenHeight, $centerCamera) => {
     $this.$setScreenBounds(0, 0, $screenWidth, $screenHeight);
     $this.$setWorldSize($screenWidth * $this.$unitsPerPixel, $screenHeight * $this.$unitsPerPixel);
-    $this.$apply0($centerCamera);
+    $this.$apply1($centerCamera);
 };
 function cbgssu_Image() {
     let a = this; cbgssu_Widget.call(a);
@@ -22109,7 +22106,7 @@ cbgssu_Image_layout = $this => {
     $regionHeight = $this.$drawable.$getMinHeight();
     $width = $this.$getWidth();
     $height = $this.$getHeight();
-    $size = $this.$scaling.$apply1($regionWidth, $regionHeight, $width, $height);
+    $size = $this.$scaling.$apply0($regionWidth, $regionHeight, $width, $height);
     $this.$imageWidth = $size.$x2;
     $this.$imageHeight = $size.$y2;
     if ($this.$align1 & 8)
@@ -30292,6 +30289,7 @@ function igt_Main() {
     a.$random1 = null;
     a.$random2 = null;
     a.$camera0 = null;
+    a.$viewport0 = null;
     a.$x3 = 0.0;
     a.$y3 = 0.0;
     a.$xwall1 = 0.0;
@@ -30306,9 +30304,6 @@ function igt_Main() {
     a.$speed2 = 0.0;
     a.$timer = 0;
     a.$randomFloat = 0.0;
-    a.$viewport0 = null;
-    a.$WORLD_WIDTH = 800.0;
-    a.$WORLD_HEIGHT = 480.0;
 }
 let igt_Main__init_ = $this => {
     cbg_ApplicationAdapter__init_($this);
@@ -30328,8 +30323,6 @@ let igt_Main__init_ = $this => {
     $this.$speed2 = 200.0;
     $this.$timer = 0;
     $this.$randomFloat = cbgm_MathUtils_random(0, 500);
-    $this.$WORLD_WIDTH = 800.0;
-    $this.$WORLD_HEIGHT = 480.0;
 },
 igt_Main__init_0 = () => {
     let var_0 = new igt_Main();
@@ -30343,9 +30336,7 @@ igt_Main_create = $this => {
     $this.$wall2 = cbgg_Texture__init_0($rt_s(577));
     $this.$evilturtle = cbgg_Texture__init_0($rt_s(578));
     $this.$camera0 = cbgg_OrthographicCamera__init_();
-    $this.$viewport0 = cbguv_FitViewport__init_0(800.0, 480.0, $this.$camera0);
-    $this.$viewport0.$apply6();
-    $this.$camera0.$position8.$set5(400.0, 240.0, 0.0);
+    $this.$viewport0 = cbguv_FitViewport__init_0(800.0, 600.0, $this.$camera0);
 },
 igt_Main_resize = ($this, $width, $height) => {
     $this.$viewport0.$update2($width, $height, 1);
@@ -30379,6 +30370,8 @@ igt_Main_render = $this => {
     $this.$batch.$draw6($this.$wall1, $this.$xwall2, $this.$ywall2);
     $this.$batch.$draw6($this.$wall2, $this.$xwall3, $this.$ywall3);
     $this.$batch.$end();
+    $this.$camera0.$update();
+    $this.$batch.$setProjectionMatrix($this.$camera0.$combined);
     $bounds = cbgm_Rectangle__init_($this.$xwall1, $this.$ywall1, $this.$wall1.$getWidth0() - 58 | 0, $this.$wall1.$getHeight0());
     $bounds2 = cbgm_Rectangle__init_($this.$xwall2, $this.$ywall2, $this.$wall1.$getWidth0() - 58 | 0, $this.$wall1.$getHeight0());
     $bounds3 = cbgm_Rectangle__init_($this.$xwall3, $this.$ywall3, $this.$wall2.$getWidth0() - 58 | 0, $this.$wall2.$getHeight0() - 58 | 0);
@@ -32553,8 +32546,8 @@ cbgu_Array, "Array", 13, jl_Object, [jl_Iterable], 0, 3, [0,0,0], 0, ["$_init_0"
 cbgu_DelayedRemovalArray, 0, cbgu_Array, [], 0, 3, 0, 0, ["$_init_3", $rt_wrapFunction1(cbgu_DelayedRemovalArray__init_), "$begin", $rt_wrapFunction0(cbgu_DelayedRemovalArray_begin), "$end", $rt_wrapFunction0(cbgu_DelayedRemovalArray_end), "$removeIndex", $rt_wrapFunction1(cbgu_DelayedRemovalArray_removeIndex), "$clear", $rt_wrapFunction0(cbgu_DelayedRemovalArray_clear)],
 jl_Runnable, 0, jl_Object, [], 3, 3, 0, 0, 0,
 jl_Thread, 0, jl_Object, [jl_Runnable], 0, 3, 0, jl_Thread_$callClinit, ["$_init_", $rt_wrapFunction1(jl_Thread__init_0), "$_init_17", $rt_wrapFunction2(jl_Thread__init_)],
-cbguv_Viewport, 0, jl_Object, [], 1, 3, 0, 0, ["$_init_0", $rt_wrapFunction0(cbguv_Viewport__init_), "$apply6", $rt_wrapFunction0(cbguv_Viewport_apply), "$apply0", $rt_wrapFunction1(cbguv_Viewport_apply0), "$unproject0", $rt_wrapFunction1(cbguv_Viewport_unproject), "$calculateScissors1", $rt_wrapFunction3(cbguv_Viewport_calculateScissors), "$getCamera", $rt_wrapFunction0(cbguv_Viewport_getCamera), "$setCamera", $rt_wrapFunction1(cbguv_Viewport_setCamera), "$getWorldWidth", $rt_wrapFunction0(cbguv_Viewport_getWorldWidth),
-"$getWorldHeight", $rt_wrapFunction0(cbguv_Viewport_getWorldHeight), "$setWorldSize", $rt_wrapFunction2(cbguv_Viewport_setWorldSize), "$setScreenBounds", $rt_wrapFunction4(cbguv_Viewport_setScreenBounds)],
+cbguv_Viewport, 0, jl_Object, [], 1, 3, 0, 0, ["$_init_0", $rt_wrapFunction0(cbguv_Viewport__init_), "$apply1", $rt_wrapFunction1(cbguv_Viewport_apply), "$unproject0", $rt_wrapFunction1(cbguv_Viewport_unproject), "$calculateScissors1", $rt_wrapFunction3(cbguv_Viewport_calculateScissors), "$getCamera", $rt_wrapFunction0(cbguv_Viewport_getCamera), "$setCamera", $rt_wrapFunction1(cbguv_Viewport_setCamera), "$getWorldWidth", $rt_wrapFunction0(cbguv_Viewport_getWorldWidth), "$getWorldHeight", $rt_wrapFunction0(cbguv_Viewport_getWorldHeight),
+"$setWorldSize", $rt_wrapFunction2(cbguv_Viewport_setWorldSize), "$setScreenBounds", $rt_wrapFunction4(cbguv_Viewport_setScreenBounds)],
 cbguv_ScalingViewport, 0, cbguv_Viewport, [], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction4(cbguv_ScalingViewport__init_), "$update2", $rt_wrapFunction3(cbguv_ScalingViewport_update)],
 cbguv_FitViewport, 0, cbguv_ScalingViewport, [], 0, 3, 0, 0, ["$_init_170", $rt_wrapFunction3(cbguv_FitViewport__init_)],
 jur_AbstractCharClass$LazyAlpha, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(jur_AbstractCharClass$LazyAlpha__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyAlpha_computeValue)],
@@ -33081,7 +33074,7 @@ $rt_wrapFunction0(jn_ShortBufferOverTypedArray_getArrayBufferView)],
 cbgu_Scaling, 0, jl_Object, [], 1, 3, 0, cbgu_Scaling_$callClinit, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling__init_)],
 cbgu_Scaling$8, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$8__init_)],
 cbgu_Scaling$7, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$7__init_)],
-cbgu_Scaling$6, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$6__init_), "$apply1", $rt_wrapFunction4(cbgu_Scaling$6_apply)],
+cbgu_Scaling$6, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$6__init_), "$apply0", $rt_wrapFunction4(cbgu_Scaling$6_apply)],
 cbgu_Scaling$5, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$5__init_)],
 cbgg_VertexAttributes, 0, jl_Object, [jl_Iterable, jl_Comparable], 4, 3, 0, 0, ["$_init_137", $rt_wrapFunction1(cbgg_VertexAttributes__init_0), "$size", $rt_wrapFunction0(cbgg_VertexAttributes_size), "$get14", $rt_wrapFunction1(cbgg_VertexAttributes_get)],
 cbgu_Scaling$9, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$9__init_)],
@@ -33091,9 +33084,9 @@ cgxgbt_TeaGraphics, 0, jl_Object, [cbg_Graphics], 0, 3, 0, 0, ["$_init_23", $rt_
 ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_33", $rt_wrapFunction2(ju_HashMap$HashEntry__init_)],
 ju_LinkedHashMap$LinkedHashMapEntry, 0, ju_HashMap$HashEntry, [], 4, 0, 0, 0, 0,
 cbgu_Scaling$4, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$4__init_)],
-cbgu_Scaling$3, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$3__init_), "$apply1", $rt_wrapFunction4(cbgu_Scaling$3_apply)],
+cbgu_Scaling$3, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$3__init_), "$apply0", $rt_wrapFunction4(cbgu_Scaling$3_apply)],
 cbgu_Scaling$2, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$2__init_)],
-cbgu_Scaling$1, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$1__init_), "$apply1", $rt_wrapFunction4(cbgu_Scaling$1_apply)],
+cbgu_Scaling$1, 0, cbgu_Scaling, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(cbgu_Scaling$1__init_), "$apply0", $rt_wrapFunction4(cbgu_Scaling$1_apply)],
 jur_AbstractCharClass$LazyASCII, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, 0, ["$_init_0", $rt_wrapFunction0(jur_AbstractCharClass$LazyASCII__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyASCII_computeValue)],
 cbggg_GlyphLayout, "GlyphLayout", 20, jl_Object, [cbgu_Pool$Poolable], 0, 3, [0,0,0], cbggg_GlyphLayout_$callClinit, ["$_init_0", $rt_wrapFunction0(cbggg_GlyphLayout__init_), "$reset2", $rt_wrapFunction0(cbggg_GlyphLayout_reset), "$toString", $rt_wrapFunction0(cbggg_GlyphLayout_toString)],
 cbggg_HdpiMode, 0, jl_Enum, [], 12, 3, 0, cbggg_HdpiMode_$callClinit, 0,

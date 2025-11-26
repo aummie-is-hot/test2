@@ -30336,7 +30336,7 @@ igt_Main_create = $this => {
     $this.$wall2 = cbgg_Texture__init_0($rt_s(577));
     $this.$evilturtle = cbgg_Texture__init_0($rt_s(578));
     $this.$camera0 = cbgg_OrthographicCamera__init_();
-    $this.$viewport0 = cbguv_FitViewport__init_0(1700.0, 864.0, $this.$camera0);
+    $this.$viewport0 = cbguv_FitViewport__init_0(1536.0, 864.0, $this.$camera0);
 },
 igt_Main_resize = ($this, $width, $height) => {
     $this.$viewport0.$update2($width, $height, 1);

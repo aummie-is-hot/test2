@@ -23,15 +23,15 @@ public class Main extends ApplicationAdapter {
      private Texture evilturtle;
     private Random random = new Random(); 
      private Random random2 = new Random(); 
-      public static final float VIRTUAL_WIDTH = 800;
-      public static final float VIRTUAL_HEIGHT = 600;
+      public static final float VIRTUAL_WIDTH = 1700;
+      public static final float VIRTUAL_HEIGHT = 864;
     private OrthographicCamera camera;
     private Viewport viewport;
     float x = 100;
     float y = 100;
      float xwall1 = -430;
     float ywall1 = -5;
-    float xwall2 = 560;
+    float xwall2 = 1620;
     float ywall2 = -5;
      float xwall3 = 0;
     float ywall3 = -430;

@@ -3,11 +3,15 @@ package io.github.test_name;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
 import java.util.Random;
 import com.badlogic.gdx.math.MathUtils;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -19,7 +23,7 @@ public class Main extends ApplicationAdapter {
      private Texture evilturtle;
     private Random random = new Random(); 
      private Random random2 = new Random(); 
-   
+       private OrthographicCamera camera;
     float x = 100;
     float y = 100;
      float xwall1 = -430;
@@ -34,7 +38,11 @@ public class Main extends ApplicationAdapter {
     float speed2 = 200;
     int timer = 0;
     float randomFloat = MathUtils.random(0,500); 
-    
+     
+    private Viewport viewport;
+
+    private final float WORLD_WIDTH = 800;  // your design width
+    private final float WORLD_HEIGHT = 480; // your design height
     @Override
     public void create() {
         batch = new SpriteBatch();
@@ -42,9 +50,18 @@ public class Main extends ApplicationAdapter {
         wall1 = new Texture("wallsides.png");
         wall2 = new Texture("wallupdown.png");
         evilturtle = new Texture("EvilTurtle.png");
-        
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        viewport.apply();
+        camera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
         
     }
+
+public void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
+
+
 
     @Override
     public void render() {

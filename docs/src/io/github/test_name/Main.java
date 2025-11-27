@@ -11,7 +11,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import java.util.Random;
 import com.badlogic.gdx.math.MathUtils;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -23,10 +25,14 @@ public class Main extends ApplicationAdapter {
      private Texture evilturtle;
     private Random random = new Random(); 
      private Random random2 = new Random(); 
-      public static final float VIRTUAL_WIDTH = 1536;
+      public static final float VIRTUAL_WIDTH = 1700;
       public static final float VIRTUAL_HEIGHT = 864;
     private OrthographicCamera camera;
     private Viewport viewport;
+    private Texture sheet;
+    private Animation<TextureRegion> animation;
+    private float stateTime;
+    int enemydead = 0;
     float x = 100;
     float y = 100;
      float xwall1 = -430;
@@ -40,18 +46,41 @@ public class Main extends ApplicationAdapter {
     float speed = 300;
     float speed2 = 200;
     int timer = 0;
-    float randomFloat = MathUtils.random(0,500); 
-     
-    
+    int dash = 0;
+    float randomFloat = MathUtils.random(0,1700); 
+    boolean playing = false;
+    float attackCooldown = 1.6f; // seconds between attacks
+    float attackTimer = 0f;      // time until next attack allowed
+    float swordx =x-70;
+    float  swordy =y+50;
+    int ishit = 0;
     @Override
     public void create() {
         batch = new SpriteBatch();
+        
         image = new Texture("turtle.png");
         wall1 = new Texture("wallsides.png");
         wall2 = new Texture("wallupdown.png");
         evilturtle = new Texture("EvilTurtle.png");
         camera = new OrthographicCamera();
         viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+         sheet = new Texture("sword2.png"); // 4 frames in one row
+
+        TextureRegion[][] tmp = TextureRegion.split(
+                sheet,
+                sheet.getWidth(),
+                sheet.getHeight() / 8
+        );
+        
+        TextureRegion[] frames = new TextureRegion[8];
+        for (int i = 0; i < 8; i++) {
+            frames[i] = tmp[i][0];
+        }
+
+        animation = new Animation<>(0.1f, frames);
+        animation.setPlayMode(Animation.PlayMode.LOOP);
+
+        stateTime = 0f;
     }
     @Override
     public void resize(int width, int height){
@@ -66,10 +95,19 @@ public class Main extends ApplicationAdapter {
         //  running like if( running = 1) 
         // put all the code in the normal game, if (running=0) restart the timer and show the restart screen
         float dt = Gdx.graphics.getDeltaTime();
+        
         if (Gdx.input.isKeyPressed(Input.Keys.A))  x -= speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) x += speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.W))    y += speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.S))  y -= speed * dt;
+          if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && attackTimer <= 0f) {
+            playing = true;
+            stateTime = 0;
+            attackTimer = attackCooldown;
+            ishit = 0;
+        }
+        if (attackTimer > 0f) attackTimer -= dt;
+        
         evily-=speed2*dt;
         timer = timer+1;
         if (timer>=1000 && timer<5000) {
@@ -79,13 +117,21 @@ public class Main extends ApplicationAdapter {
             speed2 = 700;
         }
         if(evily<=-100){
-            randomFloat = MathUtils.random(0,500);
+            randomFloat = MathUtils.random(0,1700);
 evily =700;
+enemydead =0;
         } 
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+         
+        
        batch.begin();
         batch.draw(image, x, y);
-        batch.draw(evilturtle,randomFloat, evily);
+        if (enemydead == 0){
+            batch.draw(evilturtle,randomFloat, evily);
+            
+        }
+       
+        
         batch.draw(wall1, xwall1, ywall1);
         batch.draw(wall1, xwall2, ywall2);
          batch.draw(wall2, xwall3, ywall3);
@@ -98,12 +144,42 @@ evily =700;
         Rectangle bounds2 = new Rectangle(xwall2, ywall2, wall1.getWidth()-58, wall1.getHeight());
         Rectangle bounds3 = new Rectangle(xwall3, ywall3, wall2.getWidth()-58, wall2.getHeight()-58);
         Rectangle player = new Rectangle(x, y, image.getWidth(), image.getHeight());
-        Rectangle evilturtlerect = new Rectangle(randomFloat, evily, evilturtle.getWidth(), evilturtle.getHeight());
+        Rectangle evilturtlerect = null;
+        if (enemydead == 0) evilturtlerect = new Rectangle(randomFloat, evily, evilturtle.getWidth(), evilturtle.getHeight());
+       
+        if (playing) {
+        int frameWidth = sheet.getWidth();
+        int frameHeight = sheet.getHeight() / 8;
+        stateTime += Gdx.graphics.getDeltaTime();
+        TextureRegion currentFrame = animation.getKeyFrame(stateTime, false);
+         Rectangle sword = new Rectangle(x-70, y+50, frameWidth, frameHeight);
+        batch.begin();
+        batch.draw(currentFrame, x-70,y+50 );
         
+        //shapeRenderer shapeRenderer = new ShapeRenderer();
+//shapeRenderer.setProjectionMatrix(camera.combined);
+//shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//shapeRenderer.setColor(1, 0, 0, 1); // red
+//shapeRenderer.rect(sword.x, sword.y, sword.width, sword.height-1000);
+//shapeRenderer.end();
+        batch.end();
+
+        // stop once animation ends
+        if (animation.isAnimationFinished(stateTime)) {
+            playing = false;
+        }
+        if (ishit == 0 && evilturtlerect != null && sword.overlaps(evilturtlerect)){
+          ishit = 1;
+          enemydead =1;
+
+        }
+       
+
+    }
         if (bounds.overlaps(player)) {
     x += speed * dt;
 }
-if (evilturtlerect.overlaps(player)) {
+if (evilturtlerect != null && evilturtlerect.overlaps(player)) {
  //   System.exit(0);
 }
 if (bounds2.overlaps(player)) {
@@ -112,6 +188,7 @@ if (bounds2.overlaps(player)) {
 if (bounds3.overlaps(player)) {
     y += speed * dt;
 }
+
     }
 
     @Override

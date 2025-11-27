@@ -1,11 +1,11 @@
+i:b:/libgdx.png:2456:1
 i:b:/EvilTurtle.png:5297:1
+i:b:/libgdx copy.png:2456:1
+i:b:/turtle.png:6373:1
 i:b:/fire.png:80914:1
 i:b:/firetest.png:919856:1
-i:b:/libgdx copy.png:2456:1
-i:b:/libgdx.png:2456:1
 i:b:/sword.png:97931:1
 i:b:/sword2.png:21591:1
-i:b:/turtle.png:6373:1
 i:b:/wallsides.png:16620:1
 i:b:/wallupdown.png:10407:1
 c:b:/com/badlogic/gdx/utils/lsans-15.png:10270:1

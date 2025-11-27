@@ -3,17 +3,23 @@ package io.github.test_name;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
 import java.util.Random;
 import com.badlogic.gdx.math.MathUtils;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
@@ -22,6 +28,8 @@ public class Main extends ApplicationAdapter {
     private Texture image;
     private Texture wall1;
     private Texture wall2;
+    private Label label;
+    private Stage stage;
      private Texture evilturtle;
     private Random random = new Random(); 
      private Random random2 = new Random(); 
@@ -46,7 +54,7 @@ public class Main extends ApplicationAdapter {
     float speed = 300;
     float speed2 = 200;
     int timer = 0;
-    int dash = 0;
+    double dash = 100;
     float randomFloat = MathUtils.random(0,1700); 
     boolean playing = false;
     float attackCooldown = 1.6f; // seconds between attacks
@@ -64,6 +72,7 @@ public class Main extends ApplicationAdapter {
         evilturtle = new Texture("EvilTurtle.png");
         camera = new OrthographicCamera();
         viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+        stage = new Stage(viewport);
          sheet = new Texture("sword2.png"); // 4 frames in one row
 
         TextureRegion[][] tmp = TextureRegion.split(
@@ -77,10 +86,17 @@ public class Main extends ApplicationAdapter {
             frames[i] = tmp[i][0];
         }
 
-        animation = new Animation<>(0.1f, frames);
+        animation = new Animation<>(0.05f, frames);
         animation.setPlayMode(Animation.PlayMode.LOOP);
 
         stateTime = 0f;
+        
+    label = new Label("Starting text", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+    label.setPosition(60,820);
+    label.setFontScale(3f);
+    stage.addActor(label);
+
+
     }
     @Override
     public void resize(int width, int height){
@@ -91,6 +107,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+       
         // make start screen and when you get hit restart screen with an if statement using a varibale
         //  to decide if the game is
         //  running like if( running = 1) 
@@ -98,12 +115,21 @@ public class Main extends ApplicationAdapter {
         // make it have hearts so when the enemy doesnt die and hit the bottom you lose a heart as its your base. 
         // And add a boost meter that when pressing shift allows you to move alot faster but its limited 
         // and the boost regens a bit slow like 1 every second
+       label.setText("Dash Meter: " +String.format("Value: %.2f", dash));
         float dt = Gdx.graphics.getDeltaTime();
-        
+        if (dash<100){
+            dash = dash+0.01;
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.A))  x -= speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) x += speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.W))    y += speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.S))  y -= speed * dt;
+        if (Gdx.input.isKeyPressed(Input.Keys.A)&&Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)&& dash>1){
+            x = x -10; dash = dash-0.5;
+        }  
+        if (Gdx.input.isKeyPressed(Input.Keys.D)&&Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)&& dash>1){
+            x = x+10; dash = dash-0.5;
+        } 
           if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && attackTimer <= 0f) {
             playing = true;
             stateTime = 0;
@@ -193,6 +219,7 @@ if (bounds3.overlaps(player)) {
     y += speed * dt;
 }
 
+stage.draw();
     }
 
     @Override

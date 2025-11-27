@@ -24,6 +24,7 @@ import java.util.Random;
 import com.badlogic.gdx.math.MathUtils;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
+
    private SpriteBatch batch;
     private Texture image;
     private Texture wall1;
@@ -31,6 +32,7 @@ public class Main extends ApplicationAdapter {
     private Label label;
     private Stage stage;
      private Texture evilturtle;
+     private Texture heart;
     private Random random = new Random(); 
      private Random random2 = new Random(); 
       public static final float VIRTUAL_WIDTH = 1700;
@@ -44,6 +46,7 @@ public class Main extends ApplicationAdapter {
     float x = 100;
     float y = 100;
      float xwall1 = -430;
+     int health = 3;
     float ywall1 = -5;
     float xwall2 = 1620;
     float ywall2 = -5;
@@ -55,7 +58,7 @@ public class Main extends ApplicationAdapter {
     float speed2 = 200;
     int timer = 0;
     double dash = 100;
-    float randomFloat = MathUtils.random(0,1700); 
+    float randomFloat = MathUtils.random(0,1650); 
     boolean playing = false;
     float attackCooldown = 1.6f; // seconds between attacks
     float attackTimer = 0f;      // time until next attack allowed
@@ -70,6 +73,7 @@ public class Main extends ApplicationAdapter {
         wall1 = new Texture("wallsides.png");
         wall2 = new Texture("wallupdown.png");
         evilturtle = new Texture("EvilTurtle.png");
+        heart = new Texture("heart.png");
         camera = new OrthographicCamera();
         viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         stage = new Stage(viewport);
@@ -115,11 +119,14 @@ public class Main extends ApplicationAdapter {
         // make it have hearts so when the enemy doesnt die and hit the bottom you lose a heart as its your base. 
         // And add a boost meter that when pressing shift allows you to move alot faster but its limited 
         // and the boost regens a bit slow like 1 every second
-       label.setText("Dash Meter: " +String.format("Value: %.2f", dash));
+        Rectangle evilturtlerect = null;
+       if (enemydead == 0) evilturtlerect = new Rectangle(randomFloat, evily, evilturtle.getWidth(), evilturtle.getHeight());
         float dt = Gdx.graphics.getDeltaTime();
-        if (dash<100){
-            dash = dash+0.01;
+        if (dash<=100){
+            dash = dash+0.05;
+            label.setText("Dash Meter: " +String.format("Value: %.2f", dash));
         }
+        
         if (Gdx.input.isKeyPressed(Input.Keys.A))  x -= speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.D)) x += speed * dt;
         if (Gdx.input.isKeyPressed(Input.Keys.W))    y += speed * dt;
@@ -146,11 +153,18 @@ public class Main extends ApplicationAdapter {
         if (timer>=5000) {
             speed2 = 700;
         }
+        if(evilturtlerect!=null && evily<=-100){
+            health = health-1;
+            
+ } 
         if(evily<=-100){
+            
             randomFloat = MathUtils.random(0,1700);
 evily =700;
 enemydead =0;
         } 
+        
+        
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
          
         
@@ -160,7 +174,22 @@ enemydead =0;
             batch.draw(evilturtle,randomFloat, evily);
             
         }
+        if (health==3){
+             batch.draw(heart, 1550, 760);
+       batch.draw(heart, 1450, 760);
+       batch.draw(heart, 1350, 760);
+        } if (health == 2){
+             batch.draw(heart, 1550, 760);
+       batch.draw(heart, 1450, 760);
        
+        }if (health==1){
+             batch.draw(heart, 1550, 760);
+       
+        }if(health == 0){ 
+            Gdx.app.exit();
+        }
+      
+
         
         batch.draw(wall1, xwall1, ywall1);
         batch.draw(wall1, xwall2, ywall2);
@@ -174,8 +203,8 @@ enemydead =0;
         Rectangle bounds2 = new Rectangle(xwall2, ywall2, wall1.getWidth()-58, wall1.getHeight());
         Rectangle bounds3 = new Rectangle(xwall3, ywall3, wall2.getWidth()-58, wall2.getHeight()-58);
         Rectangle player = new Rectangle(x, y, image.getWidth(), image.getHeight());
-        Rectangle evilturtlerect = null;
-        if (enemydead == 0) evilturtlerect = new Rectangle(randomFloat, evily, evilturtle.getWidth(), evilturtle.getHeight());
+        
+        
        
         if (playing) {
         int frameWidth = sheet.getWidth();
@@ -193,7 +222,7 @@ enemydead =0;
 //shapeRenderer.rect(sword.x, sword.y, sword.width, sword.height-1000);
 //shapeRenderer.end();
         batch.end();
-
+            
         // stop once animation ends
         if (animation.isAnimationFinished(stateTime)) {
             playing = false;
@@ -206,11 +235,12 @@ enemydead =0;
        
 
     }
+    
         if (bounds.overlaps(player)) {
     x += speed * dt;
 }
 if (evilturtlerect != null && evilturtlerect.overlaps(player)) {
- //   System.exit(0);
+ // System.exit(0);
 }
 if (bounds2.overlaps(player)) {
     x -= speed * dt;

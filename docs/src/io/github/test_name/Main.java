@@ -91,9 +91,13 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        // make start screen and when you get hit restart screen with an if statement using a varibale to decide if the game is
+        // make start screen and when you get hit restart screen with an if statement using a varibale
+        //  to decide if the game is
         //  running like if( running = 1) 
         // put all the code in the normal game, if (running=0) restart the timer and show the restart screen
+        // make it have hearts so when the enemy doesnt die and hit the bottom you lose a heart as its your base. 
+        // And add a boost meter that when pressing shift allows you to move alot faster but its limited 
+        // and the boost regens a bit slow like 1 every second
         float dt = Gdx.graphics.getDeltaTime();
         
         if (Gdx.input.isKeyPressed(Input.Keys.A))  x -= speed * dt;
